@@ -1,0 +1,20 @@
+{
+  "animal_sounds": {
+    "lion": "roar",
+    "cat": "meow",
+    "cow": "moo",
+    "duck": "quack",
+    "elephant": "trumpet"
+  },
+  "stories": {
+    "bedtime": "Once upon a time, in a small forest, there was a brave little bunny who loved making new friends. One day the bunny met a tiny butterfly and together they had an adventure discovering colorful flowers."
+  },
+  "abc": {
+    "alphabet_rhyme": "A is for apple, red and sweet. B is for ball, bouncing by your feet. C is for cat, cuddly and soft. D is for duck, swimming in the trough."
+  },
+  "colors": {
+    "red": "Red is the color of strawberries and fire trucks!",
+    "blue": "Blue is the color of the sky and the sea.",
+    "yellow": "Yellow is the color of bananas and sunshine!"
+  }
+}
