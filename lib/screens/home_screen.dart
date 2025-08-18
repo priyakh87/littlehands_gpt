@@ -6,6 +6,7 @@ import 'package:flutter_tts/flutter_tts.dart';
 import 'package:lottie/lottie.dart';
 import 'package:speech_to_text/speech_to_text.dart' as stt;
 import '../services/ai_service.dart';
+import 'animal_screen.dart';
 
 /// Home screen of LittlehandsGPT.
 /// Displays an animated mascot and four primary actions: animal sounds,
@@ -31,6 +32,7 @@ class _HomeScreenState extends State<HomeScreen> {
   bool _isOnline = false;
 
   Map<String, dynamic> _offlineData = {};
+  String? _currentAnimalImage;
 
   @override
   void initState() {
@@ -115,13 +117,17 @@ class _HomeScreenState extends State<HomeScreen> {
   /// delegate to [AiService] to generate a fresh response via GPT.
   Future<void> _handleAnimalSounds() async {
     if (!_isOnline) {
-      final Map<String, dynamic> animals = _offlineData['animal_sounds'] ?? {};
+      final animals = _offlineData['animal_sounds'] as Map<String, dynamic>? ?? {};
       if (animals.isEmpty) {
         await _speak('I don\'t know any animals yet.');
         return;
       }
       final animalName = animals.keys.first;
-      final sound = animals[animalName];
+      final animal = animals[animalName];
+      final sound = animal['sound'];
+      setState(() {
+        _currentAnimalImage = animal['image'];
+      });
       await _speak('$animalName goes $sound');
     } else {
       final response = await AiService.sendMessage(
@@ -244,8 +250,20 @@ class _HomeScreenState extends State<HomeScreen> {
                 child: Lottie.asset('assets/animations/mascot.json', fit: BoxFit.contain),
               ),
               const SizedBox(height: 16),
+
+               // Animal image (add here)
+              if (_currentAnimalImage != null)
+                Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Image.asset(_currentAnimalImage!, height: 150),
+                ),
               // Buttons
-              _buildActionButton('Animal Sounds', Icons.pets, _handleAnimalSounds),
+              _buildActionButton('Animal Sounds', Icons.pets,  () async {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => AnimalScreen()),
+              );
+            },),
               _buildActionButton('Story Time', Icons.book, _handleStoryTime),
               _buildActionButton('ABC Rhymes', Icons.sort_by_alpha, _handleAbc),
               _buildActionButton('Color Game', Icons.color_lens, _handleColors),
@@ -274,22 +292,34 @@ class _HomeScreenState extends State<HomeScreen> {
 
   /// Helper to build a large button with icon and label.
   Widget _buildActionButton(String label, IconData icon, Future<void> Function() onPressed) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8.0),
-      child: SizedBox(
-        width: double.infinity,
-        child: ElevatedButton.icon(
-          icon: Icon(icon, size: 28),
-          label: Padding(
-            padding: const EdgeInsets.symmetric(vertical: 16.0),
-            child: Text(label, style: const TextStyle(fontSize: 18)),
-          ),
-          onPressed: () => onPressed(),
-          style: ElevatedButton.styleFrom(
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+  return Padding(
+    padding: const EdgeInsets.symmetric(vertical: 8.0),
+    child: SizedBox(
+      width: double.infinity,
+      child: ElevatedButton.icon(
+        icon: Icon(icon, size: 28),
+        label: Padding(
+          padding: const EdgeInsets.symmetric(vertical: 16.0),
+          child: Text(
+            label,
+            style: const TextStyle(fontSize: 18),
           ),
         ),
+        style: ElevatedButton.styleFrom(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
+        ),
+        onPressed: () async {
+          try {
+            await onPressed();
+          } catch (e) {
+            debugPrint('Error in $label button: $e');
+            // Optional: show a snackbar or alert
+          }
+        },
       ),
-    );
-  }
+    ),
+  );
+}
 }
