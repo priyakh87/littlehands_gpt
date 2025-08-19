@@ -36,7 +36,9 @@ flutter:
   assets:
     - assets/animals/
     - assets/sounds/
+    - assets/sounds/bg_music.mp3
     - .env
     - assets/animations/
     - assets/images/animal_bg.png
     - assets/data/offline_prompts.json
+    - assets/animations/jungle.json
