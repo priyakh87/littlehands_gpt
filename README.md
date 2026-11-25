@@ -1,106 +1,85 @@
 # LittleHands
 
-LittleHands is a cross‑platform mobile application built with Flutter for iOS and Android. It is a friendly learning companion for toddlers aged 2–5, offering interactive games, bedtime stories, alphabet rhymes and colour exploration. The app is fully offline: no network calls, no API keys, no microphone and no child data leaves the device.
+LittleHands is a Flutter learning app for toddlers aged 2–5, for iOS and Android.
 
-## Features
+It is **fully offline**: no accounts, no network calls, no API keys and no microphone. All content ships inside the app, narration uses the phone's own text-to-speech, and progress (stars) is stored only on the device.
 
-* 🐾 **Animal Sounds** – Teach children what different animals sound like.
-* 📖 **Story Time** – Short bedtime stories suitable for young children.
-* 🔠 **ABC Rhymes** – Fun rhymes to learn the alphabet.
-* 🎨 **Colour Games** – Simple interactions to recognise colours.
-* 🧩 **Matching Game** – Drag-and-drop activities driven by JSON files in `assets/data/activities/`.
-* 🔊 **Narration** – On-device text‑to‑speech in English and Arabic.
-* 📴 **Offline Mode** – Fully functional without an internet connection.
-* 🧸 **Animated Mascot** – A friendly character engages children on the home screen.
+## Activities
 
-## Getting Started
+| Activity | What the child does | Levels |
+|---|---|---|
+| 🧩 **Matching Game** | Drag each animal picture onto its shadow | 1: 3 animals · 2: 4 animals · 3: 6 animals |
+| 🎨 **Color Game** | "Can you find red?" — tap the right colour | 1: Basic colors · 2: More colors · 3: Shapes & colors ("Find the red star!") |
+| 🔠 **ABC Rhymes** | Tap letters to hear "A is for Apple" | 1: A–M · 2: N–Z · 3: "Find the letter" quiz |
+| 📖 **Story Time** | Short bedtime stories, read aloud page by page | — |
+| 🐾 **Animal Sounds** | Tap an animal to hear its name and sound | — |
 
-### Prerequisites
+- Each level unlocks after the previous one is completed.
+- Stars per level: 3 with no mistakes, 2 with up to two mistakes, otherwise 1. The home screen shows the child's total.
+- Finishing a level or a story shows a celebration: confetti, stars and a spoken cheer, with **Again / Levels / Next**.
+- Wrong answers get gentle, non-punitive feedback ("Let's try again!").
 
-This project requires a Flutter development environment. Follow these steps on your MacBook Air M1:
+## Getting started
 
-1. **Install Homebrew** (if not already installed):
-   ```bash
-   /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
-   ```
-2. **Install Flutter**:
-   ```bash
-   brew install --cask flutter
-   ```
-   After installation, add Flutter to your path and run `flutter doctor` to set up dependencies.
-3. **Install Xcode** via the Mac App Store to build for iOS.
-4. **Install Android Studio** from [developer.android.com](https://developer.android.com/studio) and follow the setup wizard to install Android SDKs.
-5. **Set up emulators/simulators** via Xcode’s Simulator and Android Studio’s AVD Manager.
-
-### Cloning the Project
-
-Clone or download this repository, then install dependencies:
+Requirements: Flutter (stable), Xcode for iOS, Android Studio / Android SDK for Android. Run `flutter doctor` to check your setup.
 
 ```bash
-git clone <repo_url>
-cd littlehands_gpt
 flutter pub get
+flutter run            # pick a connected device or simulator
 ```
 
-### Adding activities
-
-Activities are data, not code. To add one, drop a JSON file into `assets/data/activities/` (see `animals_match.json` for the format) and list its filename in `assets/data/activities/manifest.json`.
-
-### Running the App
-
-To run on an iOS simulator (e.g., iPhone 14):
+Checks:
 
 ```bash
-flutter run -d ios
+flutter analyze
+flutter test
 ```
 
-To run on an Android emulator:
+On iOS, CocoaPods is also required (`brew install cocoapods`).
 
-```bash
-flutter run -d android
-```
+## Adding content
 
-### Building for Production
+Content is data, not code:
 
-To build an iOS simulator app bundle:
+- **Matching levels** — add a JSON file to `assets/data/activities/` (copy `animals_match.json`, set `"level"`), then list it in `assets/data/activities/manifest.json`.
+- **Stories, letters, colours and their levels** — edit `assets/data/learning.json` (`stories`, `abc`, `colors`, `color_levels`, `abc_levels`).
 
-```bash
-flutter build ios --simulator
-```
+Images and sounds go in `assets/animals/` and `assets/sounds/`.
 
-To build an Android APK for testing:
-
-```bash
-flutter build apk --debug
-```
-
-For App Store and Play Store releases, consult the official Flutter documentation on [code signing](https://docs.flutter.dev/deployment/ios) and [app bundles](https://docs.flutter.dev/deployment/android) or use the included PDF setup guide.
-
-## Structure
-
-The project follows a clear structure:
+## Project structure
 
 ```text
-littlehands_gpt/
-├── lib/
-│   ├── main.dart            # App entry point
-│   ├── models/activity.dart       # Activity data model
-│   ├── screens/
-│   │   ├── home_screen.dart       # Home screen
-│   │   ├── animal_screen.dart     # Animal sounds
-│   │   └── activities/
-│   │       └── drag_match_screen.dart # Drag-and-drop matching
-│   └── services/
-│       ├── content_engine.dart    # Loads bundled activity JSON
-│       └── tts_service.dart       # On-device narration
-├── assets/
-│   ├── data/activities/           # Activity definitions + manifest
-│   ├── data/offline_prompts.json  # Stories, rhymes, colours
-│   └── animations/mascot.json     # Lottie mascot
-├── pubspec.yaml            # Flutter dependencies and assets
-└── README.md               # This file
+lib/
+├── main.dart
+├── models/
+│   ├── activity.dart            # Matching activity model
+│   └── learning_content.dart    # Stories, letters, colours, levels
+├── screens/
+│   ├── home_screen.dart
+│   ├── levels_screen.dart       # Shared level picker + celebrate/next flow
+│   ├── animal_screen.dart
+│   ├── activities/
+│   │   └── drag_match_screen.dart
+│   └── learn/
+│       ├── abc_screen.dart
+│       ├── color_screen.dart
+│       └── story_screen.dart
+├── services/
+│   ├── content_engine.dart      # Loads matching activities from assets
+│   ├── progress_service.dart    # Stars saved on device (shared_preferences)
+│   └── tts_service.dart         # On-device narration (English / Arabic)
+└── widgets/
+    ├── celebration.dart         # Confetti + stars "wow" screen
+    └── shape_view.dart          # Circle, square, triangle, star, heart
+assets/
+├── animals/  sounds/  animations/
+└── data/
+    ├── learning.json
+    └── activities/
+test/
+└── widget_test.dart
 ```
 
-## Contributing
+## Releasing
 
-This project was generated as a proof of concept for a toddler learning application. Pull requests and improvements are welcome.
+See the Flutter guides for [iOS](https://docs.flutter.dev/deployment/ios) and [Android](https://docs.flutter.dev/deployment/android). Before the first store release, set a real bundle / application ID (currently `com.example.littlehands_gpt`) and configure signing. Never commit signing keys — they are git-ignored.
