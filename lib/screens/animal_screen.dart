@@ -20,7 +20,15 @@ class _AnimalScreenState extends State<AnimalScreen> {
   final AudioPlayer _bgPlayer = AudioPlayer();
 
   final List<String> _animals = [
-    'lion', 'dog', 'elephant', 'cow', 'duck', 'tiger', 'jaguar', 'cat', 'sheep'
+    'lion',
+    'dog',
+    'elephant',
+    'cow',
+    'duck',
+    'tiger',
+    'jaguar',
+    'cat',
+    'sheep'
   ];
 
   @override

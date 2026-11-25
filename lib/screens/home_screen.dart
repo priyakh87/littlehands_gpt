@@ -1,14 +1,15 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart' show rootBundle;
 import 'package:lottie/lottie.dart';
 
 import '../models/activity.dart';
+import '../models/learning_content.dart';
 import '../services/content_engine.dart';
 import '../services/tts_service.dart';
 import 'activities/drag_match_screen.dart';
 import 'animal_screen.dart';
+import 'learn/abc_screen.dart';
+import 'learn/color_screen.dart';
+import 'learn/story_screen.dart';
 
 /// Home screen of LittleHands.
 ///
@@ -27,51 +28,32 @@ class _HomeScreenState extends State<HomeScreen> {
   static const String _languageCode = 'en';
   static const NarrationSpeed _speed = NarrationSpeed.normal;
 
-  Map<String, dynamic> _offlineData = {};
+  /// True while a button's page is open, so a double tap can't open it twice.
+  bool _busy = false;
 
-  @override
-  void initState() {
-    super.initState();
-    _loadOfflineData();
-  }
-
-  Future<void> _loadOfflineData() async {
-    final data =
-        await rootBundle.loadString('assets/data/offline_prompts.json');
+  Future<void> _open(Widget Function(LearningContent content) build) async {
+    final content = await LearningContent.load();
     if (!mounted) return;
-    setState(() => _offlineData = jsonDecode(data) as Map<String, dynamic>);
+    await Navigator.push(
+      context,
+      MaterialPageRoute(builder: (_) => build(content)),
+    );
   }
 
-  Future<void> _speak(String text) =>
-      TtsService().speak(text, locale: 'en-US', speed: _speed);
+  Future<void> _handleStoryTime() =>
+      _open((c) => StoryListScreen(stories: c.stories));
 
-  Future<void> _handleStoryTime() async {
-    final stories = _offlineData['stories'] as Map<String, dynamic>?;
-    await _speak(stories?.values.first as String? ?? 'Once upon a time...');
-  }
+  Future<void> _handleAbc() => _open((c) => AbcScreen(letters: c.abc));
 
-  Future<void> _handleAbc() async {
-    final abc = _offlineData['abc'] as Map<String, dynamic>?;
-    await _speak(
-        abc?.values.first as String? ?? 'A is for apple. B is for ball.');
-  }
-
-  Future<void> _handleColors() async {
-    final colors = _offlineData['colors'] as Map<String, dynamic>?;
-    final entry = colors?.entries.first;
-    if (entry != null) {
-      await _speak('Can you find something that is ${entry.key}? ${entry.value}');
-    } else {
-      await _speak("Let's play a color game next time.");
-    }
-  }
+  Future<void> _handleColors() =>
+      _open((c) => ColorGameScreen(colors: c.colors));
 
   Future<void> _openMatchingGame() async {
     final activities = await ContentEngine().loadForAge(_childAge);
     final matches = activities.where((a) => a.type == 'drag_match').toList();
     if (!mounted || matches.isEmpty) return;
     if (matches.length == 1) {
-      _startActivity(matches.first);
+      await _startActivity(matches.first);
       return;
     }
     showModalBottomSheet<void>(
@@ -92,8 +74,8 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  void _startActivity(Activity activity) {
-    Navigator.push(
+  Future<void> _startActivity(Activity activity) {
+    return Navigator.push(
       context,
       MaterialPageRoute(
         // fullscreenDialog disables the iOS swipe-back gesture, which would
@@ -128,8 +110,8 @@ class _HomeScreenState extends State<HomeScreen> {
                     fit: BoxFit.contain),
               ),
               const SizedBox(height: 16),
-              _buildActionButton('Matching Game', Icons.extension,
-                  _openMatchingGame),
+              _buildActionButton(
+                  'Matching Game', Icons.extension, _openMatchingGame),
               _buildActionButton('Animal Sounds', Icons.pets, () async {
                 await Navigator.push(
                   context,
@@ -164,10 +146,14 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
           ),
           onPressed: () async {
+            if (_busy) return;
+            _busy = true;
             try {
               await onPressed();
             } catch (e) {
               debugPrint('Error in $label button: $e');
+            } finally {
+              _busy = false;
             }
           },
         ),

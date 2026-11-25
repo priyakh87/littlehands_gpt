@@ -29,5 +29,5 @@ flutter:
     - assets/animals/
     - assets/sounds/
     - assets/animations/
-    - assets/data/offline_prompts.json
+    - assets/data/learning.json
     - assets/data/activities/
