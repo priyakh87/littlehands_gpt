@@ -96,6 +96,9 @@ class _HomeScreenState extends State<HomeScreen> {
     Navigator.push(
       context,
       MaterialPageRoute(
+        // fullscreenDialog disables the iOS swipe-back gesture, which would
+        // otherwise steal sideways drags and close the game mid-activity.
+        fullscreenDialog: true,
         builder: (routeContext) => DragMatchScreen(
           activity: activity,
           languageCode: _languageCode,

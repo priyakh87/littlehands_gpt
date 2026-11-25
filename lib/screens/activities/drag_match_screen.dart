@@ -29,8 +29,8 @@ class _DragMatchScreenState extends State<DragMatchScreen> {
   bool _completed = false;
 
   /// Pieces are shuffled once so their position doesn't give away the answer.
-  late final List<ActivityItem> _shuffledPieces =
-      List.of(widget.activity.items)..shuffle();
+  late final List<ActivityItem> _shuffledPieces = List.of(widget.activity.items)
+    ..shuffle();
 
   bool get _isAr => widget.languageCode == 'ar';
   String get _locale => _isAr ? 'ar-AE' : 'en-US';
@@ -79,17 +79,18 @@ class _DragMatchScreenState extends State<DragMatchScreen> {
       textDirection: _isAr ? TextDirection.rtl : TextDirection.ltr,
       child: Scaffold(
         appBar: AppBar(
-          title: Text(_isAr ? widget.activity.titleAr : widget.activity.titleEn),
+          title:
+              Text(_isAr ? widget.activity.titleAr : widget.activity.titleEn),
         ),
         body: SafeArea(
           child: Column(
             children: [
               const SizedBox(height: 16),
               // Drop targets: a faded "shadow" of each picture.
-              Wrap(
+              _centeredRow(Wrap(
                 alignment: WrapAlignment.center,
-                spacing: 24,
-                runSpacing: 24,
+                spacing: 16,
+                runSpacing: 16,
                 children: items.map((item) {
                   final isFilled = _matched.contains(item.id);
                   return DragTarget<ActivityItem>(
@@ -118,26 +119,26 @@ class _DragMatchScreenState extends State<DragMatchScreen> {
                         ),
                         child: Opacity(
                           opacity: isFilled ? 1.0 : 0.25,
-                          child: Image.asset(item.imageAsset,
-                              fit: BoxFit.contain),
+                          child:
+                              Image.asset(item.imageAsset, fit: BoxFit.contain),
                         ),
                       );
                     },
                   );
                 }).toList(),
-              ),
+              )),
               const Spacer(),
               if (_isDone)
                 const Padding(
                   padding: EdgeInsets.all(16),
-                  child: Icon(Icons.star_rounded,
-                      size: 96, color: Colors.amber),
+                  child:
+                      Icon(Icons.star_rounded, size: 96, color: Colors.amber),
                 ),
               // Draggable pieces
-              Wrap(
+              _centeredRow(Wrap(
                 alignment: WrapAlignment.center,
-                spacing: 24,
-                runSpacing: 24,
+                spacing: 16,
+                runSpacing: 16,
                 children: _shuffledPieces
                     .where((item) => !_matched.contains(item.id))
                     .map((item) {
@@ -151,7 +152,7 @@ class _DragMatchScreenState extends State<DragMatchScreen> {
                     child: _pieceWidget(item),
                   );
                 }).toList(),
-              ),
+              )),
               const SizedBox(height: 32),
             ],
           ),
@@ -159,6 +160,12 @@ class _DragMatchScreenState extends State<DragMatchScreen> {
       ),
     );
   }
+
+  /// Gives a Wrap the full screen width so WrapAlignment.center works.
+  Widget _centeredRow(Widget child) => Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 12),
+        child: SizedBox(width: double.infinity, child: child),
+      );
 
   Widget _pieceWidget(ActivityItem item, {bool dragging = false}) {
     return Container(
