@@ -1,0 +1,31 @@
+{
+  "id": "animals_match",
+  "type": "drag_match",
+  "title_en": "Match the Animals",
+  "title_ar": "طابق الحيوانات",
+  "min_age": 2,
+  "max_age": 5,
+  "items": [
+    {
+      "id": "lion",
+      "image_asset": "assets/animals/lion.jpeg",
+      "label_en": "Lion",
+      "label_ar": "أسد",
+      "match_target_id": "lion"
+    },
+    {
+      "id": "cow",
+      "image_asset": "assets/animals/cow.jpeg",
+      "label_en": "Cow",
+      "label_ar": "بقرة",
+      "match_target_id": "cow"
+    },
+    {
+      "id": "duck",
+      "image_asset": "assets/animals/duck.jpeg",
+      "label_en": "Duck",
+      "label_ar": "بطة",
+      "match_target_id": "duck"
+    }
+  ]
+}

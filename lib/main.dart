@@ -1,28 +1,24 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 import 'screens/home_screen.dart';
 
-/// Entry point of the LittlehandsGPT application.
+/// Entry point of the LittleHands application.
 ///
-/// This function ensures that environment variables are loaded before
-/// running the app. The dotenv file (.env) should contain the
-/// OpenAI API key when online mode is used. If the file does not
-/// exist or is empty, the app will still function in offline mode.
-Future<void> main() async {
+/// The app is fully offline: no API keys, no network calls and no
+/// microphone. All content ships inside the app bundle.
+void main() {
   WidgetsFlutterBinding.ensureInitialized();
-  await dotenv.load(fileName: '.env');
   runApp(const MyApp());
 }
 
 /// Root widget for the application.
 class MyApp extends StatelessWidget {
-  const MyApp({Key? key}) : super(key: key);
+  const MyApp({super.key});
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'LittlehandsGPT',
+      title: 'LittleHands',
       theme: ThemeData(
         primarySwatch: Colors.blue,
         visualDensity: VisualDensity.adaptivePlatformDensity,

@@ -1,25 +1,21 @@
 name: littlehands_gpt
-description: A toddler‑friendly AI companion for children aged 2–5.
+description: A toddler-friendly, fully offline learning app for children aged 2–5.
 publish_to: 'none'
 version: 0.1.0+1
 
 environment:
-  sdk: '>=2.17.0 <3.0.0'
+  sdk: '>=3.3.0 <4.0.0'
 
 dependencies:
   flutter:
     sdk: flutter
   cupertino_icons: ^1.0.2
-  # Text‑to‑speech for speaking responses back to the child
-  flutter_tts: ^3.5.2
-  # Speech recognition for voice input
-  speech_to_text: ^7.3.0
-  # Environment variable support for storing secrets like the OpenAI key
-  flutter_dotenv: ^5.0.2
-  # HTTP client for API calls to OpenAI
-  http: ^0.13.5
+  # On-device, offline narration (no cloud, no API key)
+  flutter_tts: ^4.0.2
+  # Local profiles, stars, timer state — no network
+  shared_preferences: ^2.2.3
   # Lottie animations for the mascot
-  lottie: ^2.0.0
+  lottie: ^3.1.2
   # JSON utilities
   json_annotation: ^4.5.0
   audioplayers: ^6.5.0
@@ -37,8 +33,8 @@ flutter:
     - assets/animals/
     - assets/sounds/
     - assets/sounds/bg_music.mp3
-    - .env
     - assets/animations/
     - assets/images/animal_bg.png
     - assets/data/offline_prompts.json
+    - assets/data/activities/
     - assets/animations/jungle.json

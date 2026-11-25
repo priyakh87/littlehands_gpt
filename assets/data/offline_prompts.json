@@ -1,24 +1,25 @@
 {
   "animal_sounds": {
-    "lion":{
-       "sound": "roar",
-    "image": "assets/animals/lion.jpeg"
-    } ,
-    "cat":{
-       "sound": "meow",
-    "image": "assets/animals/cat.jpeg"
+    "lion": {
+      "sound": "roar",
+      "image": "assets/animals/lion.jpeg"
     },
-    "cow":{
-       "sound": "moo",
-    "image": "assets/animals/cow.jpeg"
+    "cat": {
+      "sound": "meow",
+      "image": "assets/animals/cat.jpeg"
     },
-    "duck":{
-       "sound": "quack",
-    "image": "assets/animals/duck.jpeg"
+    "cow": {
+      "sound": "moo",
+      "image": "assets/animals/cow.jpeg"
     },
-    "elephant":{
-       "sound": "trumpet",
-    "image": "assets/animals/elephant.jpeg"
+    "duck": {
+      "sound": "quack",
+      "image": "assets/animals/duck.jpeg"
+    },
+    "elephant": {
+      "sound": "trumpet",
+      "image": "assets/animals/elephant.jpeg"
+    }
   },
   "stories": {
     "bedtime": "Once upon a time, in a small forest, there was a brave little bunny who loved making new friends. One day the bunny met a tiny butterfly and together they had an adventure discovering colorful flowers."
@@ -31,4 +32,4 @@
     "blue": "Blue is the color of the sky and the sea.",
     "yellow": "Yellow is the color of bananas and sunshine!"
   }
-}}
+}
