@@ -1,6 +1,6 @@
-# LittlehandsGPT
+# LittleHands
 
-LittlehandsGPT is a cross‑platform mobile application built with Flutter for iOS and Android. It is a friendly learning companion for toddlers aged 2–5, offering interactive games, bedtime stories, alphabet rhymes and colour exploration. The app is fully offline: no network calls, no API keys, no microphone and no child data leaves the device.
+LittleHands is a cross‑platform mobile application built with Flutter for iOS and Android. It is a friendly learning companion for toddlers aged 2–5, offering interactive games, bedtime stories, alphabet rhymes and colour exploration. The app is fully offline: no network calls, no API keys, no microphone and no child data leaves the device.
 
 ## Features
 
