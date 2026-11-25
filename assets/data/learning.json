@@ -1,0 +1,190 @@
+{
+  "stories": [
+    {
+      "id": "brave_bunny",
+      "title": "The Brave Little Bunny",
+      "emoji": "🐰",
+      "pages": [
+        "Once upon a time, in a small forest, there lived a brave little bunny who loved making new friends.",
+        "One sunny morning, the bunny met a tiny butterfly fluttering by the river.",
+        "Together they hopped and flew across the meadow, discovering red, yellow and purple flowers.",
+        "When the sun went down, the bunny hugged the butterfly goodnight. They promised to play again tomorrow. The end."
+      ]
+    },
+    {
+      "id": "sleepy_moon",
+      "title": "The Sleepy Moon",
+      "emoji": "🌙",
+      "pages": [
+        "High up in the sky, the moon gave a big, slow yawn.",
+        "The stars twinkled one by one to say goodnight to the owls, the cats and the little fish.",
+        "Down below, every child snuggled into bed, warm and cozy.",
+        "And the sleepy moon smiled and whispered, sweet dreams. The end."
+      ]
+    }
+  ],
+  "abc": [
+    {
+      "letter": "A",
+      "word": "Apple",
+      "emoji": "🍎"
+    },
+    {
+      "letter": "B",
+      "word": "Ball",
+      "emoji": "⚽"
+    },
+    {
+      "letter": "C",
+      "word": "Cat",
+      "emoji": "🐱"
+    },
+    {
+      "letter": "D",
+      "word": "Duck",
+      "emoji": "🦆"
+    },
+    {
+      "letter": "E",
+      "word": "Elephant",
+      "emoji": "🐘"
+    },
+    {
+      "letter": "F",
+      "word": "Fish",
+      "emoji": "🐟"
+    },
+    {
+      "letter": "G",
+      "word": "Grapes",
+      "emoji": "🍇"
+    },
+    {
+      "letter": "H",
+      "word": "Hat",
+      "emoji": "🎩"
+    },
+    {
+      "letter": "I",
+      "word": "Ice cream",
+      "emoji": "🍦"
+    },
+    {
+      "letter": "J",
+      "word": "Juice",
+      "emoji": "🧃"
+    },
+    {
+      "letter": "K",
+      "word": "Kite",
+      "emoji": "🪁"
+    },
+    {
+      "letter": "L",
+      "word": "Lion",
+      "emoji": "🦁"
+    },
+    {
+      "letter": "M",
+      "word": "Moon",
+      "emoji": "🌙"
+    },
+    {
+      "letter": "N",
+      "word": "Nest",
+      "emoji": "🪺"
+    },
+    {
+      "letter": "O",
+      "word": "Orange",
+      "emoji": "🍊"
+    },
+    {
+      "letter": "P",
+      "word": "Pig",
+      "emoji": "🐷"
+    },
+    {
+      "letter": "Q",
+      "word": "Queen",
+      "emoji": "👸"
+    },
+    {
+      "letter": "R",
+      "word": "Rainbow",
+      "emoji": "🌈"
+    },
+    {
+      "letter": "S",
+      "word": "Sun",
+      "emoji": "☀️"
+    },
+    {
+      "letter": "T",
+      "word": "Tiger",
+      "emoji": "🐯"
+    },
+    {
+      "letter": "U",
+      "word": "Umbrella",
+      "emoji": "☂️"
+    },
+    {
+      "letter": "V",
+      "word": "Violin",
+      "emoji": "🎻"
+    },
+    {
+      "letter": "W",
+      "word": "Whale",
+      "emoji": "🐳"
+    },
+    {
+      "letter": "X",
+      "word": "Xylophone",
+      "emoji": "🎼"
+    },
+    {
+      "letter": "Y",
+      "word": "Yo-yo",
+      "emoji": "🪀"
+    },
+    {
+      "letter": "Z",
+      "word": "Zebra",
+      "emoji": "🦓"
+    }
+  ],
+  "colors": [
+    {
+      "name": "Red",
+      "hex": "#E53935",
+      "fact": "Red is the color of strawberries and fire trucks!"
+    },
+    {
+      "name": "Blue",
+      "hex": "#1E88E5",
+      "fact": "Blue is the color of the sky and the sea."
+    },
+    {
+      "name": "Yellow",
+      "hex": "#FDD835",
+      "fact": "Yellow is the color of bananas and sunshine!"
+    },
+    {
+      "name": "Green",
+      "hex": "#43A047",
+      "fact": "Green is the color of grass and leaves."
+    },
+    {
+      "name": "Orange",
+      "hex": "#FB8C00",
+      "fact": "Orange is the color of oranges and carrots."
+    },
+    {
+      "name": "Purple",
+      "hex": "#8E24AA",
+      "fact": "Purple is the color of grapes and plums."
+    }
+  ]
+}

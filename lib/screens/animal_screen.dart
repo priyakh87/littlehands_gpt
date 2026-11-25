@@ -10,9 +10,8 @@ class AnimalScreen extends StatefulWidget {
   State<AnimalScreen> createState() => _AnimalScreenState();
 }
 
-class _AnimalScreenState extends State<AnimalScreen> with SingleTickerProviderStateMixin {
+class _AnimalScreenState extends State<AnimalScreen> {
   int _currentIndex = 0;
-  bool _isPlaying = false;
   bool _isAutoPlaying = false;
   bool _isBgMusicOn = false;
 
@@ -21,28 +20,19 @@ class _AnimalScreenState extends State<AnimalScreen> with SingleTickerProviderSt
   final AudioPlayer _bgPlayer = AudioPlayer();
 
   final List<String> _animals = [
-    'lion', 'dog', 'elephant', 'cow', 'duck', 'tiger', 'jaguar', 'cat', 'sheep'
+    'lion',
+    'dog',
+    'elephant',
+    'cow',
+    'duck',
+    'tiger',
+    'jaguar',
+    'cat',
+    'sheep'
   ];
-
-  late AnimationController _bgController;
-  late Animation<double> _bgAnimation;
-  bool _isLoading = false;
-
-  @override
-  void initState() {
-    super.initState();
-    _bgController = AnimationController(
-      vsync: this,
-      duration: const Duration(seconds: 20), // slower, smoother
-    )..repeat(); // loop in one direction
-    _bgAnimation = Tween<double>(begin: 0, end: 1).animate(
-      CurvedAnimation(parent: _bgController, curve: Curves.linear),
-    );
-  }
 
   @override
   void dispose() {
-    _bgController.dispose();
     _audioPlayer.dispose();
     _bgPlayer.dispose();
     _flutterTts.stop();
@@ -53,7 +43,6 @@ class _AnimalScreenState extends State<AnimalScreen> with SingleTickerProviderSt
     if (_isBgMusicOn) {
       await _bgPlayer.pause();
     }
-    setState(() => _isPlaying = true);
     await _flutterTts.speak(animal);
     await Future.delayed(const Duration(seconds: 2));
     await _audioPlayer.play(
@@ -61,7 +50,6 @@ class _AnimalScreenState extends State<AnimalScreen> with SingleTickerProviderSt
       volume: 1.0,
     );
     await Future.delayed(const Duration(seconds: 2));
-    setState(() => _isPlaying = false);
     if (_isBgMusicOn) {
       await _bgPlayer.resume();
     }

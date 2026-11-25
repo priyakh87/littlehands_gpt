@@ -1,6 +1,6 @@
-# LittlehandsGPT
+# LittleHands
 
-LittlehandsGPT is a cross‑platform mobile application built with Flutter for iOS and Android. It acts as a friendly AI companion for toddlers aged 2–5, offering interactive games, bedtime stories, alphabet rhymes and colour exploration. The app can operate entirely offline using pre‑packaged prompts or connect to OpenAI’s GPT‑4o API for dynamic content if an API key is provided.
+LittleHands is a cross‑platform mobile application built with Flutter for iOS and Android. It is a friendly learning companion for toddlers aged 2–5, offering interactive games, bedtime stories, alphabet rhymes and colour exploration. The app is fully offline: no network calls, no API keys, no microphone and no child data leaves the device.
 
 ## Features
 
@@ -8,10 +8,9 @@ LittlehandsGPT is a cross‑platform mobile application built with Flutter for i
 * 📖 **Story Time** – Short bedtime stories suitable for young children.
 * 🔠 **ABC Rhymes** – Fun rhymes to learn the alphabet.
 * 🎨 **Colour Games** – Simple interactions to recognise colours.
-* 🎤 **Voice Input** – Listen to a child’s speech and act on simple commands.
-* 🔊 **Voice Output** – Read responses aloud using text‑to‑speech.
+* 🧩 **Matching Game** – Drag-and-drop activities driven by JSON files in `assets/data/activities/`.
+* 🔊 **Narration** – On-device text‑to‑speech in English and Arabic.
 * 📴 **Offline Mode** – Fully functional without an internet connection.
-* 🌐 **Online Mode** – Enhanced content via GPT‑4o when an API key is supplied.
 * 🧸 **Animated Mascot** – A friendly character engages children on the home screen.
 
 ## Getting Started
@@ -43,16 +42,9 @@ cd littlehands_gpt
 flutter pub get
 ```
 
-### Configuration
+### Adding activities
 
-Copy `.env.example` to `.env` and paste your OpenAI API key:
-
-```bash
-cp .env.example .env
-echo "OPENAI_API_KEY=sk-..." >> .env
-```
-
-If you don’t provide a key, the app will remain in offline mode and use the included JSON prompts.
+Activities are data, not code. To add one, drop a JSON file into `assets/data/activities/` (see `animals_match.json` for the format) and list its filename in `assets/data/activities/manifest.json`.
 
 ### Running the App
 
@@ -92,18 +84,23 @@ The project follows a clear structure:
 littlehands_gpt/
 ├── lib/
 │   ├── main.dart            # App entry point
+│   ├── models/activity.dart       # Activity data model
 │   ├── screens/
-│   │   └── home_screen.dart # UI and logic for the home screen
+│   │   ├── home_screen.dart       # Home screen
+│   │   ├── animal_screen.dart     # Animal sounds
+│   │   └── activities/
+│   │       └── drag_match_screen.dart # Drag-and-drop matching
 │   └── services/
-│       └── ai_service.dart  # API client for OpenAI
+│       ├── content_engine.dart    # Loads bundled activity JSON
+│       └── tts_service.dart       # On-device narration
 ├── assets/
-│   ├── data/offline_prompts.json # Offline content definitions
-│   └── animations/mascot.json    # Placeholder Lottie file for mascot
-├── .env.example            # Template for environment variables
+│   ├── data/activities/           # Activity definitions + manifest
+│   ├── data/offline_prompts.json  # Stories, rhymes, colours
+│   └── animations/mascot.json     # Lottie mascot
 ├── pubspec.yaml            # Flutter dependencies and assets
 └── README.md               # This file
 ```
 
 ## Contributing
 
-This project was generated as a proof of concept for an AI‑powered toddler application. Pull requests and improvements are welcome.
+This project was generated as a proof of concept for a toddler learning application. Pull requests and improvements are welcome.
