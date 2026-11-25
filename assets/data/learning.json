@@ -185,6 +185,109 @@
       "name": "Purple",
       "hex": "#8E24AA",
       "fact": "Purple is the color of grapes and plums."
+    },
+    {
+      "name": "Pink",
+      "hex": "#EC407A",
+      "fact": "Pink is the color of flamingos and candy floss."
+    },
+    {
+      "name": "Brown",
+      "hex": "#8D6E63",
+      "fact": "Brown is the color of chocolate and tree trunks."
+    },
+    {
+      "name": "Black",
+      "hex": "#212121",
+      "fact": "Black is the color of the night sky."
+    },
+    {
+      "name": "White",
+      "hex": "#FFFFFF",
+      "fact": "White is the color of snow and clouds."
+    }
+  ],
+  "color_levels": [
+    {
+      "level": 1,
+      "title": "Basic Colors",
+      "emoji": "🔴",
+      "mode": "color",
+      "colors": [
+        "Red",
+        "Blue",
+        "Yellow",
+        "Green"
+      ],
+      "choices": 4,
+      "rounds": 5
+    },
+    {
+      "level": 2,
+      "title": "More Colors",
+      "emoji": "🌈",
+      "mode": "color",
+      "colors": [
+        "Red",
+        "Blue",
+        "Yellow",
+        "Green",
+        "Orange",
+        "Purple",
+        "Pink",
+        "Brown",
+        "Black",
+        "White"
+      ],
+      "choices": 6,
+      "rounds": 6
+    },
+    {
+      "level": 3,
+      "title": "Shapes & Colors",
+      "emoji": "⭐",
+      "mode": "shape_color",
+      "colors": [
+        "Red",
+        "Blue",
+        "Yellow",
+        "Green"
+      ],
+      "shapes": [
+        "circle",
+        "square",
+        "triangle",
+        "star",
+        "heart"
+      ],
+      "choices": 6,
+      "rounds": 6
+    }
+  ],
+  "abc_levels": [
+    {
+      "level": 1,
+      "title": "Letters A to M",
+      "emoji": "🍎",
+      "mode": "explore",
+      "from": "A",
+      "to": "M"
+    },
+    {
+      "level": 2,
+      "title": "Letters N to Z",
+      "emoji": "🦓",
+      "mode": "explore",
+      "from": "N",
+      "to": "Z"
+    },
+    {
+      "level": 3,
+      "title": "Find the Letter",
+      "emoji": "🔍",
+      "mode": "quiz",
+      "choices": 4,
+      "rounds": 6
     }
   ]
 }

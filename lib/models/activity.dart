@@ -3,6 +3,7 @@
 class Activity {
   final String id;
   final String type; // 'drag_match', 'trace', 'sort', 'tap_reveal', etc.
+  final int level; // difficulty order within the activity type, from 1
   final String titleEn;
   final String titleAr;
   final int minAge;
@@ -12,6 +13,7 @@ class Activity {
   Activity({
     required this.id,
     required this.type,
+    this.level = 1,
     required this.titleEn,
     required this.titleAr,
     required this.minAge,
@@ -23,6 +25,7 @@ class Activity {
     return Activity(
       id: json['id'] as String,
       type: json['type'] as String,
+      level: (json['level'] as int?) ?? 1,
       titleEn: json['title_en'] as String,
       titleAr: json['title_ar'] as String,
       minAge: json['min_age'] as int,

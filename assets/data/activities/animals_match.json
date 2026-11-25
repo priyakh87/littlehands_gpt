@@ -1,6 +1,7 @@
 {
   "id": "animals_match",
   "type": "drag_match",
+  "level": 1,
   "title_en": "Match the Animals",
   "title_ar": "طابق الحيوانات",
   "min_age": 2,

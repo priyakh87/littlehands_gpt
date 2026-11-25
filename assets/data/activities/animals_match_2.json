@@ -1,0 +1,39 @@
+{
+  "id": "animals_match_2",
+  "type": "drag_match",
+  "level": 2,
+  "title_en": "More Animals",
+  "title_ar": "المزيد من الحيوانات",
+  "min_age": 2,
+  "max_age": 5,
+  "items": [
+    {
+      "id": "dog",
+      "image_asset": "assets/animals/dog.jpeg",
+      "label_en": "Dog",
+      "label_ar": "كلب",
+      "match_target_id": "dog"
+    },
+    {
+      "id": "cat",
+      "image_asset": "assets/animals/cat.jpeg",
+      "label_en": "Cat",
+      "label_ar": "قطة",
+      "match_target_id": "cat"
+    },
+    {
+      "id": "sheep",
+      "image_asset": "assets/animals/sheep.jpeg",
+      "label_en": "Sheep",
+      "label_ar": "خروف",
+      "match_target_id": "sheep"
+    },
+    {
+      "id": "elephant",
+      "image_asset": "assets/animals/elephant.jpeg",
+      "label_en": "Elephant",
+      "label_ar": "فيل",
+      "match_target_id": "elephant"
+    }
+  ]
+}

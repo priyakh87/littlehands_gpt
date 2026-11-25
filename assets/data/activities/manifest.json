@@ -1,3 +1,7 @@
 {
-  "files": ["animals_match.json"]
+  "files": [
+    "animals_match.json",
+    "animals_match_2.json",
+    "animals_match_3.json"
+  ]
 }

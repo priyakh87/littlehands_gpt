@@ -1,13 +1,57 @@
 import 'package:flutter/material.dart';
 
 import '../../models/learning_content.dart';
+import '../../services/progress_service.dart';
 import '../../services/tts_service.dart';
+import '../../widgets/celebration.dart';
 
 /// Lists the bundled stories; tapping one opens a page-by-page reader.
-class StoryListScreen extends StatelessWidget {
+/// Finishing a story shows a celebration and marks it with stars.
+class StoryListScreen extends StatefulWidget {
   final List<Story> stories;
 
   const StoryListScreen({super.key, required this.stories});
+
+  @override
+  State<StoryListScreen> createState() => _StoryListScreenState();
+}
+
+class _StoryListScreenState extends State<StoryListScreen> {
+  Set<String> _finished = {};
+
+  @override
+  void initState() {
+    super.initState();
+    _refresh();
+  }
+
+  Future<void> _refresh() async {
+    final done = <String>{};
+    for (final s in widget.stories) {
+      if (await ProgressService.stars('story_${s.id}', 1) > 0) done.add(s.id);
+    }
+    if (mounted) setState(() => _finished = done);
+  }
+
+  Future<void> _read(Story story) async {
+    while (true) {
+      if (!mounted) break;
+      final finished = await Navigator.push<bool>(
+        context,
+        MaterialPageRoute(builder: (_) => StoryReaderScreen(story: story)),
+      );
+      if (finished != true || !mounted) break;
+      await ProgressService.saveStars('story_${story.id}', 1, 3);
+      await _refresh();
+      if (!mounted) break;
+      final action = await showCelebration(
+        context,
+        stars: 3,
+        subtitle: 'You finished ${story.title}!',
+      );
+      if (action != CelebrationAction.replay) break;
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -15,8 +59,9 @@ class StoryListScreen extends StatelessWidget {
       appBar: AppBar(title: const Text('Story Time')),
       body: ListView(
         padding: const EdgeInsets.all(16),
-        children: stories
+        children: widget.stories
             .map((story) => Card(
+                  key: ValueKey('story_${story.id}'),
                   margin: const EdgeInsets.only(bottom: 16),
                   child: ListTile(
                     contentPadding: const EdgeInsets.all(16),
@@ -25,11 +70,11 @@ class StoryListScreen extends StatelessWidget {
                     title: Text(story.title,
                         style: const TextStyle(
                             fontSize: 22, fontWeight: FontWeight.w600)),
-                    onTap: () => Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (_) => StoryReaderScreen(story: story)),
-                    ),
+                    trailing: _finished.contains(story.id)
+                        ? const Icon(Icons.star_rounded,
+                            color: Colors.amber, size: 36)
+                        : null,
+                    onTap: () => _read(story),
                   ),
                 ))
             .toList(),
@@ -118,7 +163,7 @@ class _StoryReaderScreenState extends State<StoryReaderScreen> {
                         ? Icons.check_rounded
                         : Icons.arrow_forward_rounded),
                     onPressed: _isLast
-                        ? () => Navigator.pop(context)
+                        ? () => Navigator.pop(context, true)
                         : () => _goTo(_page + 1),
                   ),
                 ],
