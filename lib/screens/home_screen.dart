@@ -1,15 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
 
-import '../models/activity.dart';
 import '../models/learning_content.dart';
 import '../services/content_engine.dart';
+import '../services/progress_service.dart';
 import '../services/tts_service.dart';
 import 'activities/drag_match_screen.dart';
 import 'animal_screen.dart';
 import 'learn/abc_screen.dart';
 import 'learn/color_screen.dart';
 import 'learn/story_screen.dart';
+import 'levels_screen.dart';
 
 /// Home screen of LittleHands.
 ///
@@ -30,6 +31,18 @@ class _HomeScreenState extends State<HomeScreen> {
 
   /// True while a button's page is open, so a double tap can't open it twice.
   bool _busy = false;
+  int _totalStars = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    _refreshStars();
+  }
+
+  Future<void> _refreshStars() async {
+    final total = await ProgressService.totalStars();
+    if (mounted) setState(() => _totalStars = total);
+  }
 
   Future<void> _open(Widget Function(LearningContent content) build) async {
     final content = await LearningContent.load();
@@ -43,52 +56,57 @@ class _HomeScreenState extends State<HomeScreen> {
   Future<void> _handleStoryTime() =>
       _open((c) => StoryListScreen(stories: c.stories));
 
-  Future<void> _handleAbc() => _open((c) => AbcScreen(letters: c.abc));
+  Future<void> _handleAbc() => _open((c) => LevelsScreen(
+        activityKey: 'abc',
+        title: 'ABC Rhymes',
+        levels: [
+          for (final l in c.abcLevels)
+            LevelInfo(title: l.title, emoji: l.emoji),
+        ],
+        buildLevel: (_, i, onComplete) => AbcLevelScreen(
+          level: c.abcLevels[i],
+          letters: c.abc,
+          onComplete: onComplete,
+        ),
+      ));
 
-  Future<void> _handleColors() =>
-      _open((c) => ColorGameScreen(colors: c.colors));
+  Future<void> _handleColors() => _open((c) => LevelsScreen(
+        activityKey: 'colors',
+        title: 'Color Game',
+        levels: [
+          for (final l in c.colorLevels)
+            LevelInfo(title: l.title, emoji: l.emoji),
+        ],
+        buildLevel: (_, i, onComplete) => ColorLevelScreen(
+          level: c.colorLevels[i],
+          content: c,
+          onComplete: onComplete,
+        ),
+      ));
 
   Future<void> _openMatchingGame() async {
     final activities = await ContentEngine().loadForAge(_childAge);
-    final matches = activities.where((a) => a.type == 'drag_match').toList();
+    final matches = activities.where((a) => a.type == 'drag_match').toList()
+      ..sort((a, b) => a.level.compareTo(b.level));
     if (!mounted || matches.isEmpty) return;
-    if (matches.length == 1) {
-      await _startActivity(matches.first);
-      return;
-    }
-    showModalBottomSheet<void>(
-      context: context,
-      builder: (sheetContext) => ListView(
-        shrinkWrap: true,
-        children: matches
-            .map((a) => ListTile(
-                  leading: const Icon(Icons.extension),
-                  title: Text(_languageCode == 'ar' ? a.titleAr : a.titleEn),
-                  onTap: () {
-                    Navigator.pop(sheetContext);
-                    _startActivity(a);
-                  },
-                ))
-            .toList(),
-      ),
-    );
-  }
-
-  Future<void> _startActivity(Activity activity) {
-    return Navigator.push(
+    await Navigator.push(
       context,
       MaterialPageRoute(
-        // fullscreenDialog disables the iOS swipe-back gesture, which would
-        // otherwise steal sideways drags and close the game mid-activity.
-        fullscreenDialog: true,
-        builder: (routeContext) => DragMatchScreen(
-          activity: activity,
-          languageCode: _languageCode,
-          speed: _speed,
-          onComplete: (stars) {
-            // TODO: persist stars via shared_preferences.
-            Navigator.pop(routeContext);
-          },
+        builder: (_) => LevelsScreen(
+          activityKey: 'matching',
+          title: 'Matching Game',
+          levels: [
+            for (final a in matches)
+              LevelInfo(
+                  title: _languageCode == 'ar' ? a.titleAr : a.titleEn,
+                  emoji: '🧩'),
+          ],
+          buildLevel: (_, i, onComplete) => DragMatchScreen(
+            activity: matches[i],
+            languageCode: _languageCode,
+            speed: _speed,
+            onComplete: onComplete,
+          ),
         ),
       ),
     );
@@ -97,7 +115,22 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('LittleHands')),
+      appBar: AppBar(
+        title: const Text('LittleHands'),
+        actions: [
+          Padding(
+            padding: const EdgeInsets.only(right: 16),
+            child: Row(children: [
+              const Icon(Icons.star_rounded, color: Colors.amber, size: 32),
+              const SizedBox(width: 4),
+              Text('$_totalStars',
+                  key: const ValueKey('total_stars'),
+                  style: const TextStyle(
+                      fontSize: 22, fontWeight: FontWeight.bold)),
+            ]),
+          ),
+        ],
+      ),
       body: Center(
         child: SingleChildScrollView(
           padding: const EdgeInsets.all(24),
@@ -154,6 +187,7 @@ class _HomeScreenState extends State<HomeScreen> {
               debugPrint('Error in $label button: $e');
             } finally {
               _busy = false;
+              _refreshStars();
             }
           },
         ),

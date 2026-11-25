@@ -1,0 +1,53 @@
+{
+  "id": "animals_match_3",
+  "type": "drag_match",
+  "level": 3,
+  "title_en": "Animal Party",
+  "title_ar": "حفلة الحيوانات",
+  "min_age": 2,
+  "max_age": 5,
+  "items": [
+    {
+      "id": "tiger",
+      "image_asset": "assets/animals/tiger.jpeg",
+      "label_en": "Tiger",
+      "label_ar": "نمر",
+      "match_target_id": "tiger"
+    },
+    {
+      "id": "jaguar",
+      "image_asset": "assets/animals/jaguar.jpeg",
+      "label_en": "Jaguar",
+      "label_ar": "جاكوار",
+      "match_target_id": "jaguar"
+    },
+    {
+      "id": "lion",
+      "image_asset": "assets/animals/lion.jpeg",
+      "label_en": "Lion",
+      "label_ar": "أسد",
+      "match_target_id": "lion"
+    },
+    {
+      "id": "cow",
+      "image_asset": "assets/animals/cow.jpeg",
+      "label_en": "Cow",
+      "label_ar": "بقرة",
+      "match_target_id": "cow"
+    },
+    {
+      "id": "duck",
+      "image_asset": "assets/animals/duck.jpeg",
+      "label_en": "Duck",
+      "label_ar": "بطة",
+      "match_target_id": "duck"
+    },
+    {
+      "id": "dog",
+      "image_asset": "assets/animals/dog.jpeg",
+      "label_en": "Dog",
+      "label_ar": "كلب",
+      "match_target_id": "dog"
+    }
+  ]
+}
