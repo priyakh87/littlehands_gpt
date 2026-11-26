@@ -14,6 +14,8 @@ dependencies:
   flutter_tts: ^4.0.2
   # Local profiles, stars, timer state — no network
   shared_preferences: ^2.2.3
+  # Hashing the parent PIN (stored on device only)
+  crypto: ^3.0.3
   # Lottie animations for the mascot
   lottie: ^3.1.2
   audioplayers: ^6.5.0
