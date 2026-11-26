@@ -1,11 +1,16 @@
 import 'package:shared_preferences/shared_preferences.dart';
 
-/// Stores the best star score (0–3) per activity level on the device only.
-/// Nothing is synced or sent anywhere.
+import 'profile_service.dart';
+
+/// Stores the best star score (0–3) per activity level for the active
+/// child, on the device only. Nothing is synced or sent anywhere.
 class ProgressService {
   static const _prefix = 'stars:';
 
-  static String _key(String activity, int level) => '$_prefix$activity:$level';
+  static String get _childPrefix => '$_prefix${ProfileService.activeId}:';
+
+  static String _key(String activity, int level) =>
+      '$_childPrefix$activity:$level';
 
   static Future<int> stars(String activity, int level) async {
     final prefs = await SharedPreferences.getInstance();
@@ -32,7 +37,7 @@ class ProgressService {
     final prefs = await SharedPreferences.getInstance();
     return prefs
         .getKeys()
-        .where((k) => k.startsWith(_prefix))
+        .where((k) => k.startsWith(_childPrefix))
         .fold<int>(0, (sum, k) => sum + (prefs.getInt(k) ?? 0));
   }
 

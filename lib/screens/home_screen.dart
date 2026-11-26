@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
 
+import '../models/child_profile.dart';
 import '../models/learning_content.dart';
 import '../services/content_engine.dart';
+import '../services/profile_service.dart';
 import '../services/progress_service.dart';
 import '../services/tts_service.dart';
 import 'activities/drag_match_screen.dart';
@@ -11,21 +13,23 @@ import 'learn/abc_screen.dart';
 import 'learn/color_screen.dart';
 import 'learn/story_screen.dart';
 import 'levels_screen.dart';
+import 'parent/parent_gate.dart';
+import 'parent/parent_settings_screen.dart';
 
 /// Home screen of LittleHands.
 ///
 /// Fully offline: no microphone, no network, no API keys. All content is
 /// bundled in the app and narrated with the device's own TTS engine.
 class HomeScreen extends StatefulWidget {
-  const HomeScreen({super.key});
+  final ChildProfile profile;
+
+  const HomeScreen({super.key, required this.profile});
 
   @override
   State<HomeScreen> createState() => _HomeScreenState();
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  // TODO: replace with the active child profile's settings once profiles land.
-  static const int _childAge = 3;
   static const String _languageCode = 'en';
   static const NarrationSpeed _speed = NarrationSpeed.normal;
 
@@ -42,6 +46,63 @@ class _HomeScreenState extends State<HomeScreen> {
   Future<void> _refreshStars() async {
     final total = await ProgressService.totalStars();
     if (mounted) setState(() => _totalStars = total);
+  }
+
+  /// Kids can switch between existing children; adding or editing
+  /// children needs the parent gate.
+  Future<void> _switchChild() async {
+    final profiles = ProfileService.profiles;
+    await showModalBottomSheet<void>(
+      context: context,
+      builder: (sheetContext) => SafeArea(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const Padding(
+              padding: EdgeInsets.all(16),
+              child: Text("Who's playing?",
+                  style: TextStyle(fontSize: 22, fontWeight: FontWeight.w700)),
+            ),
+            for (final p in profiles)
+              ListTile(
+                key: ValueKey('switch_${p.id}'),
+                leading: Text(p.avatar, style: const TextStyle(fontSize: 36)),
+                title: Text(p.name, style: const TextStyle(fontSize: 20)),
+                trailing: p.id == widget.profile.id
+                    ? const Icon(Icons.check_circle, color: Colors.green)
+                    : null,
+                onTap: () {
+                  Navigator.pop(sheetContext);
+                  if (p.id != widget.profile.id) ProfileService.setActive(p.id);
+                },
+              ),
+            ListTile(
+              leading: const Icon(Icons.person_add_alt_1_rounded),
+              title: const Text('Add a child (grown-ups)'),
+              onTap: () {
+                Navigator.pop(sheetContext);
+                _openParentArea();
+              },
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Future<void> _openParentArea() async {
+    if (_busy) return;
+    _busy = true;
+    try {
+      if (!await showParentGate(context) || !mounted) return;
+      await Navigator.push(
+        context,
+        MaterialPageRoute(builder: (_) => const ParentSettingsScreen()),
+      );
+    } finally {
+      _busy = false;
+      _refreshStars();
+    }
   }
 
   Future<void> _open(Widget Function(LearningContent content) build) async {
@@ -85,7 +146,7 @@ class _HomeScreenState extends State<HomeScreen> {
       ));
 
   Future<void> _openMatchingGame() async {
-    final activities = await ContentEngine().loadForAge(_childAge);
+    final activities = await ContentEngine().loadForAge(widget.profile.age);
     final matches = activities.where((a) => a.type == 'drag_match').toList()
       ..sort((a, b) => a.level.compareTo(b.level));
     if (!mounted || matches.isEmpty) return;
@@ -116,18 +177,40 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('LittleHands'),
+        leadingWidth: 180,
+        leading: Padding(
+          padding: const EdgeInsets.only(left: 8),
+          child: TextButton(
+            key: const ValueKey('profile_switcher'),
+            onPressed: _switchChild,
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(widget.profile.avatar,
+                    style: const TextStyle(fontSize: 28)),
+                const SizedBox(width: 6),
+                Flexible(
+                  child: Text(widget.profile.name,
+                      overflow: TextOverflow.ellipsis,
+                      style: const TextStyle(
+                          fontSize: 18, fontWeight: FontWeight.w600)),
+                ),
+              ],
+            ),
+          ),
+        ),
         actions: [
-          Padding(
-            padding: const EdgeInsets.only(right: 16),
-            child: Row(children: [
-              const Icon(Icons.star_rounded, color: Colors.amber, size: 32),
-              const SizedBox(width: 4),
-              Text('$_totalStars',
-                  key: const ValueKey('total_stars'),
-                  style: const TextStyle(
-                      fontSize: 22, fontWeight: FontWeight.bold)),
-            ]),
+          const Icon(Icons.star_rounded, color: Colors.amber, size: 30),
+          const SizedBox(width: 4),
+          Text('$_totalStars',
+              key: const ValueKey('total_stars'),
+              style:
+                  const TextStyle(fontSize: 22, fontWeight: FontWeight.bold)),
+          IconButton(
+            key: const ValueKey('parent_settings'),
+            tooltip: 'Grown-ups',
+            icon: const Icon(Icons.settings_rounded),
+            onPressed: _openParentArea,
           ),
         ],
       ),

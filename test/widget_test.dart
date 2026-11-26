@@ -11,6 +11,7 @@ import 'package:littlehands_gpt/screens/learn/color_screen.dart';
 import 'package:littlehands_gpt/screens/learn/story_screen.dart';
 import 'package:littlehands_gpt/screens/levels_screen.dart';
 import 'package:littlehands_gpt/services/content_engine.dart';
+import 'package:littlehands_gpt/services/profile_service.dart';
 import 'package:littlehands_gpt/services/progress_service.dart';
 import 'package:littlehands_gpt/services/tts_service.dart';
 import 'package:littlehands_gpt/widgets/shape_view.dart';
@@ -22,6 +23,7 @@ void main() {
   // flutter_tts talks to a platform channel; stub it out in tests.
   setUp(() {
     SharedPreferences.setMockInitialValues({});
+    ProfileService.resetForTest();
     TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
         .setMockMethodCallHandler(
             const MethodChannel('flutter_tts'), (call) async => 1);
