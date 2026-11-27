@@ -15,7 +15,10 @@ import 'package:littlehands_gpt/services/profile_service.dart';
 import 'package:littlehands_gpt/services/progress_service.dart';
 import 'package:littlehands_gpt/services/tts_service.dart';
 import 'package:littlehands_gpt/widgets/shape_view.dart';
+import 'package:littlehands_gpt/services/subscription_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+
+import 'fake_subscriptions.dart';
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
@@ -24,6 +27,9 @@ void main() {
   setUp(() {
     SharedPreferences.setMockInitialValues({});
     ProfileService.resetForTest();
+    // Level-flow tests play every level, so act as a Premium user.
+    SubscriptionService.useBackend(FakeSubscriptions(premium: true));
+    SubscriptionService.init();
     TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
         .setMockMethodCallHandler(
             const MethodChannel('flutter_tts'), (call) async => 1);

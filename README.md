@@ -2,7 +2,7 @@
 
 LittleHands is a Flutter learning app for toddlers aged 2–5, for iOS and Android.
 
-It is **fully offline**: no accounts, no network calls, no API keys and no microphone. All content ships inside the app, narration uses the phone's own text-to-speech, and progress (stars) is stored only on the device.
+It works **offline**: no accounts, ads or tracking, and no microphone. All content ships inside the app, narration uses the phone's own text-to-speech, and profiles, stars and play time are stored only on the device. The only network use is for buying and checking a Premium subscription (App Store / Google Play via RevenueCat).
 
 ## Activities
 
@@ -19,6 +19,13 @@ It is **fully offline**: no accounts, no network calls, no API keys and no micro
 - Finishing a level or a story shows a celebration: confetti, stars and a spoken cheer, with **Again / Levels / Next**.
 - Wrong answers get gentle, non-punitive feedback ("Let's try again!").
 
+## Grown-ups, profiles and Premium
+
+- **Parent PIN** created on first launch; the ⚙️ parent area (children, daily play time, Premium, PIN) is behind it.
+- **Child profiles** with their own stars and age; a **daily play limit** shows a calm "time for a break" screen.
+- **Free:** Level 1 of every activity, the first story and Animal Sounds. **Premium** unlocks everything else; children only see "ask a grown-up", the paywall is behind the PIN.
+- Store and RevenueCat setup: see [docs/SUBSCRIPTIONS.md](docs/SUBSCRIPTIONS.md).
+
 ## Getting started
 
 Requirements: Flutter (stable), Xcode for iOS, Android Studio / Android SDK for Android. Run `flutter doctor` to check your setup.
@@ -26,6 +33,12 @@ Requirements: Flutter (stable), Xcode for iOS, Android Studio / Android SDK for 
 ```bash
 flutter pub get
 flutter run            # pick a connected device or simulator
+```
+
+To enable purchases, add the RevenueCat keys at build time (see [docs/SUBSCRIPTIONS.md](docs/SUBSCRIPTIONS.md)):
+
+```bash
+flutter run --dart-define=REVENUECAT_IOS_KEY=appl_xxx --dart-define=REVENUECAT_ANDROID_KEY=goog_xxx
 ```
 
 Checks:

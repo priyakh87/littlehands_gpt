@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 
+import '../services/access_policy.dart';
 import '../services/progress_service.dart';
+import '../services/subscription_service.dart';
 import '../widgets/celebration.dart';
+import 'parent/paywall_screen.dart';
 
 class LevelInfo {
   final String title;
@@ -75,7 +78,10 @@ class _LevelsScreenState extends State<LevelsScreen> {
         await ProgressService.saveStars(widget.activityKey, current + 1, stars);
         await _refresh();
         if (!mounted) break;
-        final hasNext = current + 1 < widget.levels.length;
+        // Only offer "Next" when the child may play it: premium levels are
+        // never sold to the child directly, only via the parent gate.
+        final hasNext = current + 1 < widget.levels.length &&
+            AccessPolicy.canPlayLevel(current + 1);
         final action = await showCelebration(
           context,
           stars: stars,
@@ -101,72 +107,89 @@ class _LevelsScreenState extends State<LevelsScreen> {
       appBar: AppBar(title: Text(widget.title)),
       body: stars == null
           ? const Center(child: CircularProgressIndicator())
-          : ListView.builder(
-              padding: const EdgeInsets.all(16),
-              itemCount: widget.levels.length,
-              itemBuilder: (context, i) {
-                final level = widget.levels[i];
-                final unlocked = ProgressService.isUnlocked(stars, i);
-                return Card(
-                  key: ValueKey('level_${i + 1}'),
-                  margin: const EdgeInsets.only(bottom: 16),
-                  color: unlocked ? null : Colors.grey.shade200,
-                  child: InkWell(
-                    borderRadius: BorderRadius.circular(12),
-                    onTap: unlocked ? () => _play(i) : null,
-                    child: Padding(
-                      padding: const EdgeInsets.all(16),
-                      child: Row(
-                        children: [
-                          Opacity(
-                            opacity: unlocked ? 1 : 0.35,
-                            child: Text(level.emoji,
-                                style: const TextStyle(fontSize: 48)),
-                          ),
-                          const SizedBox(width: 16),
-                          Expanded(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text('Level ${i + 1}',
-                                    style: TextStyle(
-                                        fontSize: 16,
-                                        color: Colors.grey.shade600)),
-                                Text(level.title,
-                                    style: const TextStyle(
-                                        fontSize: 22,
-                                        fontWeight: FontWeight.w600)),
-                                const SizedBox(height: 4),
-                                Row(
-                                  children: [
-                                    for (var s = 0; s < 3; s++)
-                                      Icon(
-                                        Icons.star_rounded,
-                                        size: 28,
-                                        color: s < stars[i]
-                                            ? Colors.amber
-                                            : Colors.grey.shade300,
-                                      ),
-                                  ],
-                                ),
-                              ],
+          : ValueListenableBuilder<bool>(
+              valueListenable: SubscriptionService.isPremium,
+              builder: (context, _, __) => ListView.builder(
+                padding: const EdgeInsets.all(16),
+                itemCount: widget.levels.length,
+                itemBuilder: (context, i) {
+                  final level = widget.levels[i];
+                  final premiumLocked = !AccessPolicy.canPlayLevel(i);
+                  final unlocked =
+                      !premiumLocked && ProgressService.isUnlocked(stars, i);
+                  return Card(
+                    key: ValueKey('level_${i + 1}'),
+                    margin: const EdgeInsets.only(bottom: 16),
+                    color: unlocked ? null : Colors.grey.shade200,
+                    child: InkWell(
+                      borderRadius: BorderRadius.circular(12),
+                      onTap: premiumLocked
+                          ? () => openPremium(context)
+                          : (unlocked ? () => _play(i) : null),
+                      child: Padding(
+                        padding: const EdgeInsets.all(16),
+                        child: Row(
+                          children: [
+                            Opacity(
+                              opacity: unlocked ? 1 : 0.35,
+                              child: Text(level.emoji,
+                                  style: const TextStyle(fontSize: 48)),
                             ),
-                          ),
-                          Icon(
-                            unlocked
-                                ? Icons.play_circle_fill_rounded
-                                : Icons.lock_rounded,
-                            size: 44,
-                            color: unlocked
-                                ? Colors.deepPurple
-                                : Colors.grey.shade500,
-                          ),
-                        ],
+                            const SizedBox(width: 16),
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text('Level ${i + 1}',
+                                      style: TextStyle(
+                                          fontSize: 16,
+                                          color: Colors.grey.shade600)),
+                                  Text(level.title,
+                                      style: const TextStyle(
+                                          fontSize: 22,
+                                          fontWeight: FontWeight.w600)),
+                                  if (premiumLocked)
+                                    Text('👑 Premium · ask a grown-up',
+                                        key: ValueKey('premium_${i + 1}'),
+                                        style: TextStyle(
+                                            fontSize: 15,
+                                            color: Colors.amber.shade900)),
+                                  const SizedBox(height: 4),
+                                  Row(
+                                    children: [
+                                      for (var s = 0; s < 3; s++)
+                                        Icon(
+                                          Icons.star_rounded,
+                                          size: 28,
+                                          color: s < stars[i]
+                                              ? Colors.amber
+                                              : Colors.grey.shade300,
+                                        ),
+                                    ],
+                                  ),
+                                ],
+                              ),
+                            ),
+                            Icon(
+                              premiumLocked
+                                  ? Icons.workspace_premium_rounded
+                                  : unlocked
+                                      ? Icons.play_circle_fill_rounded
+                                      : Icons.lock_rounded,
+                              size: 44,
+                              color: premiumLocked
+                                  ? Colors.amber.shade700
+                                  : unlocked
+                                      ? Colors.deepPurple
+                                      : Colors.grey.shade500,
+                            ),
+                          ],
+                        ),
                       ),
                     ),
-                  ),
-                );
-              },
+                  );
+                },
+              ),
             ),
     );
   }
