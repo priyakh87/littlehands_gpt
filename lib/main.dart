@@ -6,6 +6,7 @@ import 'screens/time_up_screen.dart';
 import 'screens/welcome_screen.dart';
 import 'services/play_time_service.dart';
 import 'services/profile_service.dart';
+import 'services/subscription_service.dart';
 
 /// Entry point of the LittleHands application.
 ///
@@ -16,6 +17,8 @@ Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await ProfileService.load();
   PlayTimeService.instance.start();
+  // Doesn't block startup; premium unlocks as soon as RevenueCat answers.
+  SubscriptionService.init();
   runApp(const MyApp());
 }
 

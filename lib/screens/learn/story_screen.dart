@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
 
 import '../../models/learning_content.dart';
+import '../../services/access_policy.dart';
 import '../../services/progress_service.dart';
+import '../../services/subscription_service.dart';
 import '../../services/tts_service.dart';
 import '../../widgets/celebration.dart';
+import '../parent/paywall_screen.dart';
 
 /// Lists the bundled stories; tapping one opens a page-by-page reader.
 /// Finishing a story shows a celebration and marks it with stars.
@@ -57,27 +60,38 @@ class _StoryListScreenState extends State<StoryListScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: const Text('Story Time')),
-      body: ListView(
-        padding: const EdgeInsets.all(16),
-        children: widget.stories
-            .map((story) => Card(
-                  key: ValueKey('story_${story.id}'),
-                  margin: const EdgeInsets.only(bottom: 16),
-                  child: ListTile(
-                    contentPadding: const EdgeInsets.all(16),
-                    leading:
-                        Text(story.emoji, style: const TextStyle(fontSize: 48)),
-                    title: Text(story.title,
-                        style: const TextStyle(
-                            fontSize: 22, fontWeight: FontWeight.w600)),
-                    trailing: _finished.contains(story.id)
-                        ? const Icon(Icons.star_rounded,
-                            color: Colors.amber, size: 36)
-                        : null,
-                    onTap: () => _read(story),
-                  ),
-                ))
-            .toList(),
+      body: ValueListenableBuilder<bool>(
+        valueListenable: SubscriptionService.isPremium,
+        builder: (context, _, __) => ListView(
+          padding: const EdgeInsets.all(16),
+          children: [
+            for (var i = 0; i < widget.stories.length; i++)
+              _storyCard(context, i),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _storyCard(BuildContext context, int i) {
+    final story = widget.stories[i];
+    final locked = !AccessPolicy.canReadStory(i);
+    return Card(
+      key: ValueKey('story_${story.id}'),
+      margin: const EdgeInsets.only(bottom: 16),
+      child: ListTile(
+        contentPadding: const EdgeInsets.all(16),
+        leading: Text(story.emoji, style: const TextStyle(fontSize: 48)),
+        title: Text(story.title,
+            style: const TextStyle(fontSize: 22, fontWeight: FontWeight.w600)),
+        subtitle: locked ? const Text('👑 Premium · ask a grown-up') : null,
+        trailing: locked
+            ? Icon(Icons.workspace_premium_rounded,
+                color: Colors.amber.shade700, size: 36)
+            : _finished.contains(story.id)
+                ? const Icon(Icons.star_rounded, color: Colors.amber, size: 36)
+                : null,
+        onTap: locked ? () => openPremium(context) : () => _read(story),
       ),
     );
   }

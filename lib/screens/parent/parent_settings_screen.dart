@@ -3,7 +3,9 @@ import 'package:flutter/material.dart';
 import '../../models/child_profile.dart';
 import '../../services/play_time_service.dart';
 import '../../services/profile_service.dart';
+import '../../services/subscription_service.dart';
 import 'parent_gate.dart';
+import 'paywall_screen.dart';
 import 'profile_edit_screen.dart';
 
 /// Grown-ups area (opened only after the parent gate): manage children,
@@ -96,6 +98,24 @@ class _ParentSettingsScreenState extends State<ParentSettingsScreen> {
               label: const Text('Add a child'),
             ),
             const Divider(height: 40),
+            ValueListenableBuilder<bool>(
+              valueListenable: SubscriptionService.isPremium,
+              builder: (context, premium, _) => ListTile(
+                key: const ValueKey('subscription_tile'),
+                leading: Icon(Icons.workspace_premium_rounded,
+                    color: Colors.amber.shade700),
+                title: const Text('LittleHands Premium'),
+                subtitle: Text(premium
+                    ? 'Active: all levels and stories unlocked'
+                    : 'Free plan: Level 1 of each activity and the first story'),
+                trailing: const Icon(Icons.chevron_right),
+                // Already past the parent gate here.
+                onTap: () => Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (_) => const PaywallScreen()),
+                ),
+              ),
+            ),
             ListTile(
               key: const ValueKey('change_pin'),
               leading: const Icon(Icons.pin_rounded),
@@ -111,9 +131,11 @@ class _ParentSettingsScreenState extends State<ParentSettingsScreen> {
             const ListTile(
               leading: Icon(Icons.lock_outline_rounded),
               title: Text('Privacy'),
-              subtitle:
-                  Text('Everything stays on this device. LittleHands has no '
-                      'accounts, ads or tracking.'),
+              subtitle: Text(
+                  'Profiles, stars and play time stay on this device. '
+                  'LittleHands has no accounts, ads or tracking. Purchases '
+                  'are handled by the App Store / Google Play and RevenueCat '
+                  '(an anonymous ID, no names or emails).'),
             ),
           ],
         ),
